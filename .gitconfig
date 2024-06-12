@@ -1,0 +1,107 @@
+[includeIf "hasconfig:remote.*.url:https://github.com/**"]
+  path = ~/.gitconfig.public
+
+[includeIf "hasconfig:remote.*.url:https://github.*.com/**"]
+  path = ~/.gitconfig.work
+
+[pull]
+	rebase = true
+
+[branch]
+	autosetupmerge = always
+
+[init]
+	templateDir = ~/.git-template
+
+[alias]
+  co = checkout
+  count = shortlog -sn
+  g = grep --break --heading --line-number
+  gi = grep --break --heading --line-number -i
+  changed = show --pretty=\"format:\" --name-only
+  fm = fetch-merge
+  pr = open-pr
+  unstage = reset HEAD --
+  uncommit = reset --soft HEAD
+  purge = clean -fd
+  please = push --force-with-lease
+  commend = commit --amend --no-edit
+  fpr = fetch-pr
+  lga = log --all --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
+  lt = log --tags --decorate --simplify-by-decoration --oneline
+  ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
+  lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
+  lds = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short
+  glog= log --oneline --decorate --graph
+  ll= log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+[color]
+  diff = auto
+  status = auto
+  branch = auto
+  ui = true
+
+[core]
+  excludesfile = ~/.gitignore.global
+  editor = vim
+  compression = -1
+  autocrlf = input
+  whitespace = trailing-space,space-before-tab
+  precomposeunicode = true
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    features = side-by-side line-numbers decorations
+    whitespace-error-style = 22 reverse
+
+[delta "decorations"]
+    commit-decoration-style = bold yellow box ul
+    file-style = bold yellow ul
+    file-decoration-style = none
+
+[apply]
+  whitespace = nowarn
+
+[help]
+  autocorrect = 1
+
+[merge]
+    ff = only
+[mergetool "diffmerge"]
+  cmd = diffmerge --merge --result=$MERGED $LOCAL $BASE $REMOTE
+  trustExitCode = true
+  keepBackup = false
+
+[diff]
+  tool = batdiff
+
+[difftool]
+  prompt = false
+
+[interactive]
+    diffFilter = bat --style=header,grid
+
+[difftool "batdiff"]
+  cmd = batdiff $LOCAL $REMOTE
+[difftool "diffmerge"]
+  cmd = diffmerge $LOCAL $REMOTE
+
+[branch]
+    autosetupmerge = true
+    autosetuprebase = always
+
+[grep]
+  extendRegexp = true
+  lineNumber = true
+
+[push]
+  default = current
+
+[submodule]
+  fetchJobs = 4
+
+[log]
+  showSignature = false
