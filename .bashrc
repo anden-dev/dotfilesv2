@@ -22,7 +22,6 @@ PATH_HOMEBREW_UTIL_LINUX_SBIN="$HOMEBREW_HOME/opt/util-linux/sbin"
 PATH_HOMEBREW_COMBINED="$PATH_HOMEBREW_BIN:$PATH_HOMEBREW_SBIN:$PATH_HOMEBREW_GNUBIN:$PATH_HOMEBREW_GNUTAR:$PATH_HOMEBREW_FINDUTILS:$PATH_HOMEBREW_GREP:$PATH_HOMEBREW_UTIL_LINUX_BIN:$PATH_HOMEBREW_UTIL_LINUX_SBIN"
 export PATH="$HOME/bin:$PATH_HOMEBREW_COMBINED:/usr/local/bin:$PATH"
 
-
 alias reload='source ~/.bashrc'
 alias dot='git --git-dir=$HOME/.dot/ --work-tree=$HOME'
 
@@ -43,6 +42,9 @@ alias ls="eza --icons=always"
 alias cat='bat'
 alias pp='pbpaste'
 alias yy='pbcopy'
+alias jj='pbpaste | jsonpp | pbcopy'
+alias jjj='pbpaste | jsonpp'
+
 alias cd="z"
 
 eval "$(direnv hook bash)"
@@ -51,6 +53,7 @@ eval "$(fzf --bash)"
 eval "$(thefuck --alias)"
 eval "$(thefuck --alias fk)"
 eval "$(zoxide init bash)"
+eval "$(pyenv init -)"
 
 export BAT_THEME="Sublime Snazzy"
 export LC_ALL=en_US.UTF-8
@@ -75,7 +78,6 @@ export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${purple},fg+:${fg},bg+:${
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
-
 
 # - The first argument to the function ($1) is the base path to start traversal
 # - See the source code (completion.{bash,zsh}) for the details.
@@ -103,8 +105,8 @@ _fzf_comprun() {
   shift
 
   case "$command" in
-    cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
-    export|unset) fzf --preview "eval 'echo \${}'"         "$@" ;;
-    *)            fzf --preview "$show_file_or_dir_preview" "$@" ;;
+  cd) fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+  export | unset) fzf --preview "eval 'echo \${}'" "$@" ;;
+  *) fzf --preview "$show_file_or_dir_preview" "$@" ;;
   esac
 }
