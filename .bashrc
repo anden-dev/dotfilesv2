@@ -11,6 +11,10 @@ if [[ "${OS}" == "Darwin" ]]; then
   export HOMEBREW_HOME="/opt/homebrew"
 fi
 
+export GOPATH="$HOME/.go"
+export GOROOT="$(brew --prefix golang)/libexec"
+export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+
 PATH_HOMEBREW_BIN="$HOMEBREW_HOME/bin"
 PATH_HOMEBREW_SBIN="$HOMEBREW_HOME/sbin"
 PATH_HOMEBREW_GNUBIN="$HOMEBREW_HOME/opt/gnu-sed/libexec/gnubin"
@@ -22,8 +26,10 @@ PATH_HOMEBREW_UTIL_LINUX_SBIN="$HOMEBREW_HOME/opt/util-linux/sbin"
 PATH_HOMEBREW_COMBINED="$PATH_HOMEBREW_BIN:$PATH_HOMEBREW_SBIN:$PATH_HOMEBREW_GNUBIN:$PATH_HOMEBREW_GNUTAR:$PATH_HOMEBREW_FINDUTILS:$PATH_HOMEBREW_GREP:$PATH_HOMEBREW_UTIL_LINUX_BIN:$PATH_HOMEBREW_UTIL_LINUX_SBIN"
 export PATH="$HOME/bin:$PATH_HOMEBREW_COMBINED:/usr/local/bin:$PATH"
 
-alias reload='source ~/.bashrc'
+
 alias dot='git --git-dir=$HOME/.dot/ --work-tree=$HOME'
+
+source $HOME/bin/project_push_env.sh
 
 alias k='kubectl'
 alias kx='kubectx'
@@ -32,16 +38,19 @@ alias gbda_merged='git fetch -p; git branch --merged | grep -vE "(^\*|master|dev
 alias gbda_unmerged='git branch --no-merged | grep -vE "(^\*|master|dev)" | xargs git branch -D'
 alias gcdchanges='cd $(git diff --cached --name-only | xargs dirname | uniq)'
 alias gcdroot='pushd $(git rev-parse --show-toplevel)'
+alias gresettags='git tag -l | xargs git tag -d && git fetch -t'
 
 alias dot='git --git-dir=$HOME/.dot/ --work-tree=$HOME'
 
 alias tg='terragrunt'
-alias tgproviders='rm -f .terraform.locks.hcl; terragrunt providers lock -platform=linux_arm64 -platform=linux_amd64 -platform=darwin_amd64 -platform=darwin_arm64 -platform=windows_amd64'
+alias tgay='terragrunt apply -auto-approve'
+alias tgdy='terragrunt destroy -auto-approve'
+alias tgpr='rm -f .terraform.locks.hcl; terragrunt providers lock -platform=linux_arm64 -platform=linux_amd64 -platform=darwin_amd64 -platform=darwin_arm64 -platform=windows_amd64'
 
 alias ls="eza --icons=always"
 alias cat='bat'
 alias pp='pbpaste'
-alias yy='pbcopy'
+alias yy="tr -d '\n' | pbcopy"
 alias jj='pbpaste | jsonpp | pbcopy'
 alias jjj='pbpaste | jsonpp'
 
@@ -55,9 +64,13 @@ eval "$(thefuck --alias fk)"
 eval "$(zoxide init bash)"
 eval "$(pyenv init -)"
 
+# config exports
 export BAT_THEME="Sublime Snazzy"
+export EDITOR='vim'
+export VEDITOR='code'
+export VISUAL=$EDITOR
 export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-
+export LANG=en_US.UTF-8
 
 if [[ -f "$HOME/.localrc" ]]; then
   source "$HOME/.localrc"
@@ -110,3 +123,7 @@ _fzf_comprun() {
   *) fzf --preview "$show_file_or_dir_preview" "$@" ;;
   esac
 }
+
+[[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+
+
