@@ -16,6 +16,7 @@ $git_branch\
 $git_state\
 $git_status\
 $git_metrics\
+$aws\
 $kubernetes\
 $fill\
 $battery\
@@ -59,11 +60,6 @@ symbol = "💣 "
 format = '[\[$symbol$status\]]($style) '
 disabled = false
 
-[terraform]
-disabled = true
-# format = "[TF $version]($style) "
-
-
 [fill]
 symbol = " "
 
@@ -75,15 +71,18 @@ truncate_to_repo = true
 truncation_symbol = "…/"
 
 [aws]
-disabled = true
-format = "on [$symbol$profile]($style) "
-style = "bold blue"
-symbol = "🅰 "
+format = 'on [$symbol($profile )(\($region\) )]($style)'
+#format = 'on [$symbol$profile]($region)($style) '
+style = 'bold blue'
+symbol = '🅰 '
 
 [aws.region_aliases]
 eu-central-1 = "FRA"
 eu-west-1 = "DUB"
 eu-west-2 = "LHR"
+
+[aws.profile_aliases]
+'*_sysadmin-sol' = ''
 
 [kubernetes]
 disabled = false
