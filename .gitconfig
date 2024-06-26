@@ -48,19 +48,7 @@
   autocrlf = input
   whitespace = trailing-space,space-before-tab
   precomposeunicode = true
-    pager = delta
-
-[interactive]
-    diffFilter = delta --color-only
-
-[delta]
-    features = side-by-side line-numbers decorations
-    whitespace-error-style = 22 reverse
-
-[delta "decorations"]
-    commit-decoration-style = bold yellow box ul
-    file-style = bold yellow ul
-    file-decoration-style = none
+  pager = delta
 
 [apply]
   whitespace = nowarn
@@ -69,29 +57,37 @@
   autocorrect = 1
 
 [merge]
-    ff = only
-[mergetool "diffmerge"]
-  cmd = diffmerge --merge --result=$MERGED $LOCAL $BASE $REMOTE
-  trustExitCode = true
-  keepBackup = false
+  ff = only
+
+[interactive]
+  diffFilter = bat --style=header,grid
+
+[difftool "batdiff"]
+  cmd = batdiff $LOCAL $REMOTE
 
 [diff]
+  #tool = difftastic
   tool = batdiff
+  external = difft
 
 [difftool]
   prompt = false
 
-[interactive]
-    diffFilter = bat --style=header,grid
+[difftool "difftastic"]
+  cmd = difft "$LOCAL" "$REMOTE"
 
-[difftool "batdiff"]
-  cmd = batdiff $LOCAL $REMOTE
-[difftool "diffmerge"]
-  cmd = diffmerge $LOCAL $REMOTE
+[pager]
+  difftool = true
+
+[merge]
+  conflictstyle = diff3
+
+[diff]
+  colorMoved = default
 
 [branch]
-    autosetupmerge = true
-    autosetuprebase = always
+  autosetupmerge = true
+  autosetuprebase = always
 
 [grep]
   extendRegexp = true
