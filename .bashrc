@@ -26,7 +26,6 @@ PATH_HOMEBREW_UTIL_LINUX_SBIN="$HOMEBREW_HOME/opt/util-linux/sbin"
 PATH_HOMEBREW_COMBINED="$PATH_HOMEBREW_BIN:$PATH_HOMEBREW_SBIN:$PATH_HOMEBREW_GNUBIN:$PATH_HOMEBREW_GNUTAR:$PATH_HOMEBREW_FINDUTILS:$PATH_HOMEBREW_GREP:$PATH_HOMEBREW_UTIL_LINUX_BIN:$PATH_HOMEBREW_UTIL_LINUX_SBIN"
 export PATH="$HOME/bin:$PATH_HOMEBREW_COMBINED:/usr/local/bin:$PATH"
 
-
 alias dot='git --git-dir=$HOME/.dot/ --work-tree=$HOME'
 
 source $HOME/bin/project_push_env.sh
@@ -125,5 +124,3 @@ _fzf_comprun() {
 }
 
 [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
-
-
