@@ -1,109 +1,338 @@
-# ~/.config/starship.toml
-
-# # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# Inserts a blank line between shell prompts
+
+# Insert a blank line between shell prompts
 add_newline = true
 
+# Increase the default command timeout to 2 seconds
+command_timeout = 2000
 
+# Place this line directly under the `command_timeout` entry at the top of the file
+palette = "catppuccin_macchiato"
 
-format = """
-$username\
-$hostname\
+# Define the order and format of the information in our prompt
+format = """\
+[](fg:#3B76F0)\
 $directory\
-$git_branch\
-$git_state\
-$git_status\
-$git_metrics\
-$aws\
-$kubernetes\
-$fill\
-$battery\
-$cmd_duration $jobs $time\
-$line_break\
+${custom.directory_separator_not_git}\
+${custom.directory_separator_git}\
+$symbol($git_branch[](fg:#FCF392))\
+$symbol( $git_commit$git_status$git_metrics$git_state)$fill$cmd_duration$nodejs$all\
+${custom.git_config_email}
 $character"""
 
-# Replace the "❯" symbol in the prompt with "➜"
-[character] # The name of the module we are configuring is "character"
-success_symbol = "[➜](bold green)" # The "success_symbol" segment is being set to "➜" with the color "bold green"
-error_symbol = "[X](bold red) "
+#[](fg:yellow bg:green)\
+#[](fg:green bg:sapphire)\
+#[](fg:sapphire bg:lavender)\
+#[](bg:yellow fg:peach)\
 
-# Disable the package module, hiding it from the prompt completely
+#format = """
+#[](red)\
+#$os\
+#$username\
+#[](fg:yellow bg:green)\
+#$directory\
+#[](bg:peach fg:red)\
+#$git_branch\
+#$git_status\
+#[ ](fg:lavender)\
+#$line_break\
+#$character"""
+
+# Output a styled separator right after the directory when inside a git repository.
+[custom.directory_separator_git]
+description = "Output a styled separator right after the directory when inside a git repository."
+command = ""
+format = "[](fg:#3B76F0 bg:#FCF392)"
+# Only when inside git repository
+when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+
+# Output a styled separator right after the directory when NOT inside a git repository.
+[custom.directory_separator_not_git]
+description = "Output a styled separator right after the directory when NOT inside a git repository."
+command = ""
+format = "[](fg:#3B76F0)"
+# Only when NOT inside a git repository
+when = "! git rev-parse --is-inside-work-tree > /dev/null 2>&1"
+
+# Output the current git config email address
+[custom.git_config_email]
+description = "Output the current git user's configured email address."
+command = "git config user.email"
+format = "\n[$symbol(  $output)]($style)"
+# Only when inside git repository
+when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+style = "text"
+
 [package]
-disabled = true
+disabled = true # Enable to output the current working directory's package version
+format = "[$symbol$version]($style) "
+display_private = true
 
-# makes prompt a single line
-[line_break]
-disabled = false
 
-[python]
-disabled = true
-
-[cmd_duration]
-min_time = 10_000  # Show command duration over 10,000 milliseconds (= 10 sec)
-format = "took [$duration]($style)"
-
-# These symbols will only show when battery levels are 20% or less
+# Customize the battery indicator
 [battery]
-charging_symbol = "⚡️ "
-discharging_symbol = "💀 "
+format = "[$symbol $percentage]($style) "
+empty_symbol = "🪫"
+charging_symbol = "🔋"
+full_symbol = '🔋'
 
-[[battery.display]]  # "bold red" style when capacity is between 0% and 20%
-threshold = 20
-style = "bold red"
-
-# Clear visibility for exit codes
-[status]
-style = "bg:red"
-symbol = "💣 "
-format = '[\[$symbol$status\]]($style) '
+[[battery.display]]
+threshold = 10
+style = 'red'
+[os]
 disabled = false
+style = "bg:red fg:crust"
 
-[fill]
-symbol = " "
+[os.symbols]
+Windows = ""
+Ubuntu = "󰕈"
+SUSE = ""
+Raspbian = "󰐿"
+Mint = "󰣭"
+Macos = "󰀵"
+Manjaro = ""
+Linux = "󰌽"
+Gentoo = "󰣨"
+Fedora = "󰣛"
+Alpine = ""
+Amazon = ""
+Android = ""
+Arch = "󰣇"
+Artix = "󰣇"
+CentOS = ""
+Debian = "󰣚"
+Redhat = "󱄛"
+RedHatEnterprise = "󱄛"
+
+[username]
+show_always = false
+style_user = "bg:red fg:crust"
+style_root = "bg:red fg:crust"
+format = '[ $user]($style)'
 
 [directory]
-style = "blue"
-read_only = "🔒"
+style = "bg:peach fg:crust"
+format = "[ $path ]($style)"
 truncation_length = 3
-truncate_to_repo = true
 truncation_symbol = "…/"
 
-[aws]
-format = 'on [$symbol($profile )(\($region\) )]($style)'
-#format = 'on [$symbol$profile]($region)($style) '
-style = 'bold blue'
-symbol = '🅰 '
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = "󰝚 "
+"Pictures" = " "
+"Developer" = "󰲋 "
 
-[aws.region_aliases]
-eu-central-1 = "FRA"
-eu-west-1 = "DUB"
-eu-west-2 = "LHR"
+[git_branch]
+symbol = ""
+style = "bg:yellow"
+format = '[[ $symbol $branch ](fg:crust bg:yellow)]($style)'
 
-[aws.profile_aliases]
-'*_sysadmin-sol' = ''
+[git_status]
+style = "bg:yellow"
+format = '[[($all_status$ahead_behind )](fg:crust bg:yellow)]($style)'
 
-[kubernetes]
-disabled = false
-format = 'on [⛵ $context \($namespace\)](dimmed green) '
+[nodejs]
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
 
-[[kubernetes.contexts]]
-context_pattern = "[0-9]{12}_(?P<var_cluster>[\\w-]+)-.*"
-context_alias = "$var_cluster"
+[c]
+symbol = " "
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+
+[rust]
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+
+[golang]
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+
+[php]
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+
+[java]
+symbol = " "
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+
+[kotlin]
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+
+[haskell]
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+
+[python]
+symbol = ""
+style = "bg:green"
+format = '[[ $symbol( $version)(\(#$virtualenv\)) ](fg:crust bg:green)]($style)'
+
+[docker_context]
+symbol = ""
+style = "bg:sapphire"
+format = '[[ $symbol( $context) ](fg:crust bg:sapphire)]($style)'
+
+[conda]
+symbol = "  "
+style = "fg:crust bg:sapphire"
+format = '[$symbol$environment ]($style)'
+ignore_base = false
 
 [time]
 disabled = false
-style = "bold white"
-format = "[$time]($style)"
+time_format = "%R"
+style = "bg:lavender"
+format = '[[  $time ](fg:crust bg:lavender)]($style)'
 
-[git_status]
-format = '([\[$all_status$ahead_behind\]]($style) )'
-style = "cyan"
+[line_break]
+disabled = true
 
-[git_state]
-format = '\([$state( $progress_current/$progress_total)]($style)\) '
-style = "bright-black"
-
-[git_metrics]
+[kubernetes]
 disabled = false
+symbol = "⎈"
+format = '[$symbol](bright-black) [$context( \($namespace\))]($style)'
+
+[[kubernetes.contexts]]
+context_pattern = "^production$"
+context_alias = "production"
+style = "green"
+
+[character]
+disabled = false
+success_symbol = '[❯](bold fg:green)'
+error_symbol = '[❯](bold fg:red)'
+vimcmd_symbol = '[❮](bold fg:green)'
+vimcmd_replace_one_symbol = '[❮](bold fg:lavender)'
+vimcmd_replace_symbol = '[❮](bold fg:lavender)'
+vimcmd_visual_symbol = '[❮](bold fg:yellow)'
+
+[cmd_duration]
+show_milliseconds = true
+format = " in $duration "
+style = "bg:lavender"
+disabled = false
+show_notifications = true
+min_time_to_notify = 45000
+
+[palettes.catppuccin_mocha]
+rosewater = "#f5e0dc"
+flamingo = "#f2cdcd"
+pink = "#f5c2e7"
+mauve = "#cba6f7"
+red = "#f38ba8"
+maroon = "#eba0ac"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+sky = "#89dceb"
+sapphire = "#74c7ec"
+blue = "#89b4fa"
+lavender = "#b4befe"
+text = "#cdd6f4"
+subtext1 = "#bac2de"
+subtext0 = "#a6adc8"
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+surface2 = "#585b70"
+surface1 = "#45475a"
+surface0 = "#313244"
+base = "#1e1e2e"
+mantle = "#181825"
+crust = "#11111b"
+
+[palettes.catppuccin_frappe]
+rosewater = "#f2d5cf"
+flamingo = "#eebebe"
+pink = "#f4b8e4"
+mauve = "#ca9ee6"
+red = "#e78284"
+maroon = "#ea999c"
+peach = "#ef9f76"
+yellow = "#e5c890"
+green = "#a6d189"
+teal = "#81c8be"
+sky = "#99d1db"
+sapphire = "#85c1dc"
+blue = "#8caaee"
+lavender = "#babbf1"
+text = "#c6d0f5"
+subtext1 = "#b5bfe2"
+subtext0 = "#a5adce"
+overlay2 = "#949cbb"
+overlay1 = "#838ba7"
+overlay0 = "#737994"
+surface2 = "#626880"
+surface1 = "#51576d"
+surface0 = "#414559"
+base = "#303446"
+mantle = "#292c3c"
+crust = "#232634"
+
+[palettes.catppuccin_latte]
+rosewater = "#dc8a78"
+flamingo = "#dd7878"
+pink = "#ea76cb"
+mauve = "#8839ef"
+red = "#d20f39"
+maroon = "#e64553"
+peach = "#fe640b"
+yellow = "#df8e1d"
+green = "#40a02b"
+teal = "#179299"
+sky = "#04a5e5"
+sapphire = "#209fb5"
+blue = "#1e66f5"
+lavender = "#7287fd"
+text = "#4c4f69"
+subtext1 = "#5c5f77"
+subtext0 = "#6c6f85"
+overlay2 = "#7c7f93"
+overlay1 = "#8c8fa1"
+overlay0 = "#9ca0b0"
+surface2 = "#acb0be"
+surface1 = "#bcc0cc"
+surface0 = "#ccd0da"
+base = "#eff1f5"
+mantle = "#e6e9ef"
+crust = "#dce0e8"
+
+[palettes.catppuccin_macchiato]
+rosewater = "#f4dbd6"
+flamingo = "#f0c6c6"
+pink = "#f5bde6"
+mauve = "#c6a0f6"
+red = "#ed8796"
+maroon = "#ee99a0"
+peach = "#f5a97f"
+yellow = "#eed49f"
+green = "#a6da95"
+teal = "#8bd5ca"
+sky = "#91d7e3"
+sapphire = "#7dc4e4"
+blue = "#8aadf4"
+lavender = "#b7bdf8"
+text = "#cad3f5"
+subtext1 = "#b8c0e0"
+subtext0 = "#a5adcb"
+overlay2 = "#939ab7"
+overlay1 = "#8087a2"
+overlay0 = "#6e738d"
+surface2 = "#5b6078"
+surface1 = "#494d64"
+surface0 = "#363a4f"
+base = "#24273a"
+mantle = "#1e2030"
+crust = "#181926"
