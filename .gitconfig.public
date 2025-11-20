@@ -1,6 +1,10 @@
 [user]
-  name = anden-dev
-  email = anden-dev@gmail.com
+  name = Andreas Engl
+  email = anden.dev@gmail.com
+  username = anden-dev
+
+[github]
+	user = anden-dev
 
 [credential "https://github.com"]
   helper = !gh auth git-credential
